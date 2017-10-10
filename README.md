@@ -5,6 +5,20 @@ This package contains a set of nodes that are used to get user handwriting input
 
 Tested with ROS Indigo.
 
+Install & Compile:
+---------------
+```
+$ cd ~/catkin_ws/src/
+$ git clone  https://github.com/chili-epfl/choose_adaptive_words.git
+$ cd ../
+$ catkin_make
+```
+
+
+Requierments:
+---------------
+
+
 Provided nodes:
 ---------------
 - `????.py`: the main node ????
