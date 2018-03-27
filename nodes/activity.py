@@ -52,7 +52,7 @@ class Activity(QtWidgets.QDialog):
 		self.publish_word_written = rospy.Publisher(TOPIC_WORDS_WRITTEN, Path, queue_size=10)
 		self.publish_word_written_finished = rospy.Publisher(TOPIC_WORDS_WRITTEN_FINISHED, String, queue_size=10)
 		self.publish_word_to_write = rospy.Publisher(TOPIC_WORDS_TO_WRITE, String, queue_size=10)
-		
+
 		# add tactile surface
 		self.tactileSurface = TactileSurfaceArea(self)
 		self.tactileSurface.setGeometry(QRect(0, yBeginningTactile, self.frameGeometry().width(), self.frameGeometry().height() - yBeginningTactile))
@@ -108,7 +108,7 @@ class Activity(QtWidgets.QDialog):
 			self.buttonProfile.setIconSize(QSize(100, 100))
 			self.buttonPredict.setEnabled(True)
 
-			date = "_" + str(datetime.now().year) + "_" + str(datetime.now().month) + "_" + str(datetime.now().day) + "_" + str(datetime.now().hour) + "_" + str(datetime.now().minute) 
+			date = "_" + str(datetime.now().year) + "_" + str(datetime.now().month) + "_" + str(datetime.now().day) + "_" + str(datetime.now().hour) + "_" + str(datetime.now().minute)
 			self.pathWriter = PATH_DB + "/" + self.childProfile.lastName + "_" + self.childProfile.firstName + date
 
 	def buttonSendRobotClicked(self):
@@ -143,7 +143,7 @@ class Activity(QtWidgets.QDialog):
 		# clear screen
 		self.tactileSurface.eraseRobotTrace()
 		self.tactileSurface.erasePixmap()
-		
+
 	def callback_words_to_write(self, data):
 
 		self.lettersToWrite = [d for d in data.data]
@@ -154,14 +154,14 @@ class Activity(QtWidgets.QDialog):
 		trace = self.tactileSurface.getData()
 		boxes = self.tactileSurface.boxesToDraw
 		letters = self.wt.separateWordsToLetters(trace, boxes, self.tactileSurface.height(), self.tactileSurface.convert_pix_meter)
-		
+
 		# compute score of all letters
 		for index in letters:
-			d_score = self.predictor.predict(self.childProfile.rightHanded, 
-				self.childProfile.male, 
-				self.childProfile.dateBirth.daysTo(QDate().currentDate())/30.5, 
-				self.childProfile.section, 
-				letters[index], 
+			d_score = self.predictor.predict(self.childProfile.rightHanded,
+				self.childProfile.male,
+				self.childProfile.dateBirth.daysTo(QDate().currentDate())/30.5,
+				self.childProfile.section,
+				letters[index],
 				self.lettersToWrite[index])
 
 			self.skills[self.lettersToWrite[index]].dScore.append(d_score)
@@ -180,7 +180,7 @@ class Activity(QtWidgets.QDialog):
 		self.tactileSurface.eraseRobotTrace()
 		self.tactileSurface.erasePixmap()
 
-	
+
 	def algo(self):
 
 		cost = {}
@@ -230,12 +230,12 @@ class Activity(QtWidgets.QDialog):
 			p = P_EXPLOITATION*((1. - mastery) + (1. - uncertainty)) + P_EXPLORATION*(1. - frequency) + P_PROGRESS*(progress)
 
 			print(self.skills[index].glyph, self.skills[index].dScore, mastery, uncertainty, progress, frequency, "--- ", p)
-			
+
 
 			# 2 letters in a word -> manage that
 			if p < 0:
 				p = 0
-				
+
 			proba.append(p)
 			letters.append(self.skills[index].glyph)
 
@@ -275,14 +275,14 @@ class Activity(QtWidgets.QDialog):
 		self.publish_word_to_write.publish(newWord.lower())
 
 	def saveData(self, letters):
-		
+
 		pathInfo = self.pathWriter + "/info.txt"
 
 		if os.path.isdir(PATH_DB):
 			if not os.path.isdir(self.pathWriter):
 				os.mkdir(self.pathWriter)
 			if not os.path.isfile(pathInfo):
-				file = open(pathInfo, "w") 
+				file = open(pathInfo, "w")
 
 				file.write("firstName: " + self.childProfile.firstName)
 				file.write("\nlastName: " + self.childProfile.lastName)
@@ -292,7 +292,7 @@ class Activity(QtWidgets.QDialog):
 				file.write("\nsection: " + str(self.childProfile.section))
 				file.write("\ntestDate: " + str(datetime.now()))
 
-				file.close() 
+				file.close()
 
 		else:
 			print("DB path doesn't exists, change it in parameters.py")
@@ -322,7 +322,7 @@ class Activity(QtWidgets.QDialog):
 				file.write(str(rec.pressure))
 				file.write(str("\n"))
 
-			file.close() 
+			file.close()
 
 	def closeEvent(self, event):
 
@@ -348,7 +348,7 @@ class Activity(QtWidgets.QDialog):
 				file.write(str(d))
 			file.write("\n")
 
-			file.close() 
+			file.close()
 
 
 if __name__ == '__main__':
@@ -362,8 +362,3 @@ if __name__ == '__main__':
 	sys.exit(app.exec_())
 
 	rospy.spin()
-
-
-
-
-

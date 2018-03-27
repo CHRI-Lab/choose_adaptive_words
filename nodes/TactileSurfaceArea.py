@@ -30,7 +30,7 @@ class TactileSurfaceArea(QTableWidget):
 		self.boxesToDraw = []
 		self.data = []
 		self.convert_pix_meter = 0.0001534
-		
+
 		self.initPixmaps()
 		self.setAutoFillBackground(True)
 		self.setCursor(Qt.BlankCursor)
@@ -54,7 +54,7 @@ class TactileSurfaceArea(QTableWidget):
 		p.drawPixmap(0, 0, self.pixmap)
 		p.drawPixmap(0, 0, self.pixmapHandwriting)
 		p.end()
-		
+
 	def tabletEvent(self, event):
 		if event.type() == QTabletEvent.TabletPress:
 			if self.deviceDown == False:
@@ -75,7 +75,7 @@ class TactileSurfaceArea(QTableWidget):
 				painter = QPainter(self.pixmapHandwriting)
 				self.paintPixmap(painter, event)
 				self.data.append(Data(self.time.elapsed(), event.posF().x(), event.posF().y(), event.xTilt(), event.yTilt(), event.pressure()))
-		
+
 	def updateBrush(self, event):
 		#hue, saturation, value, alpha;
 		#myColor.getHsv(&hue, &saturation, &value, &alpha)
@@ -89,7 +89,7 @@ class TactileSurfaceArea(QTableWidget):
 
 		myColor.setHsv(0, vValue, hValue, alpha)
 		#myColor.setAlpha(alpha)
-		
+
 		self.myPen.setWidthF(event.pressure() * 2 + 1)
 		self.myBrush.setColor(myColor)
 		self.myPen.setColor(myColor)

@@ -43,6 +43,10 @@ class Model():
 
 		self.cell = tf.contrib.rnn.LSTMCell(lstm_size, state_is_tuple=True)
 		self.stacked_lstm = tf.contrib.rnn.MultiRNNCell([self.cell] * 2, state_is_tuple=True)
+		stacked_rnn = []
+		for iiLyr in range(2):
+			stacked_rnn.append(tf.nn.rnn_cell.LSTMCell(num_units=lstm_size, state_is_tuple=True))
+		self.stacked_lstm = tf.nn.rnn_cell.MultiRNNCell(cells=stacked_rnn, state_is_tuple=True)
 		self.val, self.state = tf.nn.dynamic_rnn(self.stacked_lstm, self.data, dtype=tf.float32, sequence_length=self.seqlen)
 
 
@@ -59,7 +63,7 @@ class Model():
 		self.prediction_1 = tf.nn.relu(self.prediction_1)
 		# dropout 50%
 		self.prediction_1 = tf.nn.dropout(self.prediction_1, self.dropout_keep_prob)
-		
+
 		# put another nn layer to add some non linearity
 		self.weight_2 = tf.Variable(tf.truncated_normal([nn_size, nb_class]))
 		self.bias_2 = tf.Variable(tf.constant(0.1, shape=[nb_class]))
@@ -100,7 +104,7 @@ class Model():
 	def giveScores(self, xTest, yTest, seqLenTest):
 
 		all_scores = []
-		
+
 
 		#if len(seq) == batch_size:
 		try:
@@ -119,7 +123,7 @@ class Model():
 		saver = tf.train.Saver()
 
 		no_of_batches = int(len(xTrain)/batch_size)
-		
+
 		for i in range(epoch):
 			ptr = 0
 			accuracy = []
@@ -149,7 +153,7 @@ class Model():
 					save_path = os.path.join(self.save_dir, 'best_validation')
 					saver.save(sess=self.session, save_path=save_path)
 
-			
+
 		self.session.close()
 
 	def restore(self):
