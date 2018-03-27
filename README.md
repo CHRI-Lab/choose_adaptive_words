@@ -35,4 +35,13 @@ For instance, for a specific experiment, this way:
 
 ```
 $ roslaunch choose_adaptive_words [...other options]
+
 ```
+
+
+TODO
+-----
+- Remove Federer Button (be able to change to adaptive mode or regular mode with a threshold we could set
+- Clean screen just after the we send a new word
+- Make a "real" eraser, select the zones to clean
+
