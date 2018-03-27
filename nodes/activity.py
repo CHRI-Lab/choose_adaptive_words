@@ -18,6 +18,7 @@ from Predictor import Predictor
 from WordTool import WordTool
 from Glyph import Glyph
 from parameters import *
+from manager_view import Manager
 
 yBeginningTactile = 100
 TOPIC_WORDS_COMING = "write_traj"
@@ -44,7 +45,7 @@ class Activity(QtWidgets.QDialog):
 		uic.loadUi('../design/activity_words.ui', self)
 		self.show()
 
-		# suscribe to topics
+		# subscribe to topics
 		rospy.Subscriber(TOPIC_WORDS_COMING, Path, self.callback_words_coming)
 		rospy.Subscriber(TOPIC_BOXES, Float64MultiArray, self.callback_boxes)
 		rospy.Subscriber(TOPIC_WORDS_TO_WRITE, String, self.callback_words_to_write)
@@ -60,10 +61,10 @@ class Activity(QtWidgets.QDialog):
 
 		# add slots
 		self.buttonErase.clicked.connect(self.buttonEraseClicked)
-		self.buttonPredict.clicked.connect(self.buttonPredictClicked)
-		self.buttonProfile.clicked.connect(self.buttonProfileClicked)
+
+
 		self.tactileSurface.signalRobotFinishWriting.connect(self.callback_RobotFinishWriting)
-		self.buttonSendRobot.clicked.connect(self.buttonSendRobotClicked)
+
 
 	def initSkills(self):
 		for glyph in "abcdefghijklmnopqrstuvwxyz":
@@ -74,7 +75,7 @@ class Activity(QtWidgets.QDialog):
 			self.tactileSurface.setGeometry(QRect(0, yBeginningTactile, self.frameGeometry().width(), self.frameGeometry().height() - yBeginningTactile))
 
 		self.buttonErase.move(self.width() - self.buttonErase.width() - 10, self.buttonErase.y())
-		self.buttonProfile.move(self.width() - 2*self.buttonProfile.width() - 2*10, self.buttonProfile.y())
+		#self.buttonProfile.move(self.width() - 2*self.buttonProfile.width() - 2*10, self.buttonProfile.y())
 
 	def buttonEraseClicked(self):
 
@@ -88,97 +89,16 @@ class Activity(QtWidgets.QDialog):
 		self.tactileSurface.drawWord(data)
 
 	def callback_boxes(self, data):
-
 		self.tactileSurface.boxesToDraw.append(data.data)
 
 	def callback_RobotFinishWriting(self):
 		self.publish_word_written_finished.publish("true")
-
 		rospy.sleep(3.0)
 		self.tactileSurface.drawBoxes()
 
-	def buttonProfileClicked(self):
-		self.childProfile = ChildProfile(self)
-		self.childProfile.signal_profileCompleted.connect(self.callback_profileCompleted)
-
-	def callback_profileCompleted(self):
-		self.childProfile.close()
-		if self.childProfile.isprofileCompleted():
-			self.buttonProfile.setIcon(QIcon("../design/profil_G.png"))
-			self.buttonProfile.setIconSize(QSize(100, 100))
-			self.buttonPredict.setEnabled(True)
-
-			date = "_" + str(datetime.now().year) + "_" + str(datetime.now().month) + "_" + str(datetime.now().day) + "_" + str(datetime.now().hour) + "_" + str(datetime.now().minute)
-			self.pathWriter = PATH_DB + "/" + self.childProfile.lastName + "_" + self.childProfile.firstName + date
-
-	def buttonSendRobotClicked(self):
-
-		data = self.tactileSurface.data
-		boxesCoordinates = self.tactileSurface.boxesToDraw
-
-		# create message containing path of word
-		words_drawn = Path()
-
-		for d in data:
-
-			pose = PoseStamped()
-
-			pose.pose.position.x = d.x*self.tactileSurface.convert_pix_meter
-			pose.pose.position.y = -d.y*self.tactileSurface.convert_pix_meter + self.tactileSurface.height()*self.tactileSurface.convert_pix_meter# - boxesCoordinates[0][1]
-			pose.header.seq = self.seqWord
-			words_drawn.poses.append(pose)
-
-			self.seqWord += 1
-
-		words_drawn.header.stamp = rospy.get_rostime()
-
-		# publish in topic
-		self.publish_word_written.publish(words_drawn)
-
-
-		words_drawn = Path()
-		words_drawn.header.stamp = rospy.get_rostime()
-		self.publish_word_written.publish(words_drawn)
-
-		# clear screen
-		self.tactileSurface.eraseRobotTrace()
-		self.tactileSurface.erasePixmap()
-
 	def callback_words_to_write(self, data):
-
 		self.lettersToWrite = [d for d in data.data]
 
-	def buttonPredictClicked(self):
-
-		# get letters from boxes
-		trace = self.tactileSurface.getData()
-		boxes = self.tactileSurface.boxesToDraw
-		letters = self.wt.separateWordsToLetters(trace, boxes, self.tactileSurface.height(), self.tactileSurface.convert_pix_meter)
-
-		# compute score of all letters
-		for index in letters:
-			d_score = self.predictor.predict(self.childProfile.rightHanded,
-				self.childProfile.male,
-				self.childProfile.dateBirth.daysTo(QDate().currentDate())/30.5,
-				self.childProfile.section,
-				letters[index],
-				self.lettersToWrite[index])
-
-			self.skills[self.lettersToWrite[index]].dScore.append(d_score)
-
-
-		# save data
-		self.saveData(letters)
-
-		# update knowledge about dico
-		self.wt.updateWords(self.skills)
-
-		# choose next word
-		self.algo()
-
-		# clear screen
-		self.tactileSurface.eraseRobotTrace()
-		self.tactileSurface.erasePixmap()
 
 
 	def algo(self):
@@ -351,6 +271,9 @@ class Activity(QtWidgets.QDialog):
 			file.close()
 
 
+
+
+
 if __name__ == '__main__':
 	# init node
 	rospy.init_node("choose_adaptive_words")
@@ -359,6 +282,9 @@ if __name__ == '__main__':
 	app = QtWidgets.QApplication(sys.argv)
 	#app.setOverrideCursor(Qt.BlankCursor)
 	window = Activity()
+	manager = Manager(window)
+
+
 	sys.exit(app.exec_())
 
 	rospy.spin()
