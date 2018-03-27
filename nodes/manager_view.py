@@ -1,27 +1,52 @@
 from PyQt5 import uic, QtWidgets
 import PyQt5.QtCore as QtCore
+from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import QObject, QRect, Qt, QSize, QDate
 from PyQt5.QtGui import QIcon
+from ChildProfile import ChildProfile
+from datetime import datetime
+from os.path import expanduser
+from nav_msgs.msg import Path
+from std_msgs.msg import String
+
+import rospy
+
 import sys
 
+TOPIC_WORDS_TO_WRITE = "words_to_write"
+
 class Manager(QtWidgets.QDialog):
-    def __init__(self, activity):
+    def __init__(self, activity_w):
         super(Manager, self).__init__()
         uic.loadUi('../design/manager_view.ui', self)
         self.show()
+        self.activity = activity_w
         self.buttonPredict.clicked.connect(self.buttonPredictClicked)
-        #self.buttonSendRobot.clicked.connect(self.buttonSendRobotClicked)
-        self.activity_win = activity
+        self.buttonSendRobot.clicked.connect(self.buttonSendRobotClicked)
+        self.buttonErase.clicked.connect(self.buttonEraseClicked)
+        self.buttonProfile.clicked.connect(self.buttonProfileClicked)
+        self.buttonPathDialog.clicked.connect(self.buttonPathDialogClicked)
+        self.buttonWordToWrite.clicked.connect(self.buttonWordToWriteClicked)
+
+        ## init publisher
+        self.publish_word_to_write = rospy.Publisher(TOPIC_WORDS_TO_WRITE, String, queue_size=10)
+
 
     def callback_profileCompleted(self):
         self.activity.childProfile.close()
         if self.activity.childProfile.isprofileCompleted():
-            #self.buttonProfile.setIcon(QIcon("../design/profil_G.png"))
+            self.buttonProfile.setIcon(QIcon("../design/profil_G.png"))
             self.buttonProfile.setIconSize(QSize(100, 100))
             self.buttonPredict.setEnabled(True)
 
         date = "_" + str(datetime.now().year) + "_" + str(datetime.now().month) + "_" + str(datetime.now().day) + "_" + str(datetime.now().hour) + "_" + str(datetime.now().minute)
-        self.activity.pathWriter = PATH_DB + "/" + self.childProfile.lastName + "_" + self.activity.childProfile.firstName + date
+        self.activity.pathWriter = self.pathText.getText() + "/" + self.childProfile.lastName + "_" + self.activity.childProfile.firstName + date
+
+    def buttonEraseClicked(self):
+        self.activity.tactileSurface.erasePixmap()
+
+    def buttonWordToWriteClicked(self):
+        self.publish_word_to_write.publish(self.wordText.text().lower())
 
 
     def buttonProfileClicked(self):
@@ -95,3 +120,7 @@ class Manager(QtWidgets.QDialog):
         # clear screen
         self.activity.tactileSurface.eraseRobotTrace()
         self.activity.tactileSurface.erasePixmap()
+
+    def buttonPathDialogClicked(self):
+        input_dir = QFileDialog.getExistingDirectory(None, 'Select a folder:', expanduser("~"))
+        self.pathText.setText(input_dir)
