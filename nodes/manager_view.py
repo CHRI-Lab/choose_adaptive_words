@@ -7,7 +7,7 @@ from ChildProfile import ChildProfile
 from datetime import datetime
 from os.path import expanduser
 from nav_msgs.msg import Path
-from std_msgs.msg import String, UInt8, Float64MultiArray
+from std_msgs.msg import String, UInt8, Float64MultiArray, Float32
 from geometry_msgs.msg import PoseStamped
 import numpy as np
 
@@ -35,7 +35,7 @@ class Manager(QtWidgets.QDialog):
 
         ## init publisher
         self.publish_word_to_write = rospy.Publisher(TOPIC_WORDS_TO_WRITE, String, queue_size=10)
-        self.publish_simple_learning_pace = rospy.Publisher(TOPIC_LEARNING_PACE, UInt8, queue_size=10)
+        self.publish_simple_learning_pace = rospy.Publisher(TOPIC_LEARNING_PACE, Float32, queue_size=10)
 
 
     def callback_profileCompleted(self):
@@ -55,7 +55,7 @@ class Manager(QtWidgets.QDialog):
         self.publish_word_to_write.publish(self.wordText.text().lower())
 
     def sliderLearningPaceUpdated(self):
-        self.publish_simple_learning_pace.publish(np.uint8(self.sliderLearningPace.value()))
+        self.publish_simple_learning_pace.publish(np.uint8(self.sliderLearningPace.value()/100))
         self.labelLeariningPace.setText(str(self.sliderLearningPace.value()))
 
     def buttonProfileClicked(self):
