@@ -7,13 +7,16 @@ from ChildProfile import ChildProfile
 from datetime import datetime
 from os.path import expanduser
 from nav_msgs.msg import Path
-from std_msgs.msg import String
+from std_msgs.msg import String, UInt8, Float64MultiArray
+from geometry_msgs.msg import PoseStamped
+import numpy as np
 
 import rospy
 
 import sys
 
 TOPIC_WORDS_TO_WRITE = "words_to_write"
+TOPIC_LEARNING_PACE = "simple_learning_pace"
 
 class Manager(QtWidgets.QDialog):
     def __init__(self, activity_w):
@@ -27,9 +30,12 @@ class Manager(QtWidgets.QDialog):
         self.buttonProfile.clicked.connect(self.buttonProfileClicked)
         self.buttonPathDialog.clicked.connect(self.buttonPathDialogClicked)
         self.buttonWordToWrite.clicked.connect(self.buttonWordToWriteClicked)
+        self.sliderLearningPace.sliderReleased.connect(self.sliderLearningPaceUpdated)
+        self.labelLeariningPace.setText(str(self.sliderLearningPace.value()))
 
         ## init publisher
         self.publish_word_to_write = rospy.Publisher(TOPIC_WORDS_TO_WRITE, String, queue_size=10)
+        self.publish_simple_learning_pace = rospy.Publisher(TOPIC_LEARNING_PACE, UInt8, queue_size=10)
 
 
     def callback_profileCompleted(self):
@@ -48,6 +54,9 @@ class Manager(QtWidgets.QDialog):
     def buttonWordToWriteClicked(self):
         self.publish_word_to_write.publish(self.wordText.text().lower())
 
+    def sliderLearningPaceUpdated(self):
+        self.publish_simple_learning_pace.publish(np.uint8(self.sliderLearningPace.value()))
+        self.labelLeariningPace.setText(str(self.sliderLearningPace.value()))
 
     def buttonProfileClicked(self):
         self.activity.childProfile = ChildProfile(self.activity)

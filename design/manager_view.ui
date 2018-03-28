@@ -120,12 +120,12 @@
     </size>
    </property>
   </widget>
-  <widget class="QSlider" name="horizontalSlider">
+  <widget class="QSlider" name="sliderLearningPace">
    <property name="geometry">
     <rect>
      <x>330</x>
      <y>60</y>
-     <width>160</width>
+     <width>241</width>
      <height>16</height>
     </rect>
    </property>
@@ -153,7 +153,7 @@
     <rect>
      <x>330</x>
      <y>30</y>
-     <width>201</width>
+     <width>171</width>
      <height>18</height>
     </rect>
    </property>
@@ -227,6 +227,19 @@
    </property>
    <property name="text">
     <string>Send new word</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelLeariningPace">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>30</y>
+     <width>74</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>50</string>
    </property>
   </widget>
  </widget>
