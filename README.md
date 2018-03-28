@@ -3,7 +3,7 @@ choose_adaptive_words
 
 This package contains a set of nodes that are used to get user handwriting input and adapt the next word to the skills of the user
 
-Tested with ROS Indigo.
+Tested with ROS Indigo on Ubuntu 16.04 (LTS)
 
 Install & Compile:
 ---------------
@@ -17,14 +17,20 @@ $ catkin_make
 
 Requierments:
 ---------------
+See CoWriter project requirements
 
-
-Provided nodes:
+Provided functionalities:
 ---------------
-- `????.py`: the main node ????
+In `./nodes` run `python activity.py`to launch the writing app. 
+The main node that opens two windows, one for writing the other one to manage the parameters
 
-- `some_other_node??.py`: provides services etc.
+![](/home/wafa/catkin_ws/src/choose_adaptive_words/p1.png =100x20)
+![](/home/wafa/catkin_ws/src/choose_adaptive_words/p2.png =100x20) 
 
+- Change the Simple Learning Pace (0,100)
+- TODO : use PCA
+- TODO : use CNN
+- TODO: use adapt thibolt
 
 Letters dataset configuration
 -----------------------------
