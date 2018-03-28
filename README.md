@@ -44,4 +44,7 @@ TODO
 - Remove Federer Button (be able to change to adaptive mode or regular mode with a threshold we could set
 - Clean screen just after the we send a new word
 - Make a "real" eraser, select the zones to clean
+- makenao look at tablet 
+- check arms
+- make the path of the robot editable by the kid
 
