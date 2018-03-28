@@ -24,7 +24,7 @@ Provided functionalities:
 In `./nodes` run `python activity.py`to launch the writing app. 
 The main node that opens two windows, one for writing the other one to manage the parameters
 
-![](/home/wafa/catkin_ws/src/choose_adaptive_words/p1.png)
+![](p1.png)
 
 
 - Change the Simple Learning Pace (0,100)
