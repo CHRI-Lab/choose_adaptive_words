@@ -30,7 +30,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>eraser.svg</normaloff>eraser.svg</iconset>
+     <normaloff>assets/eraser.svg</normaloff>assets/eraser.svg</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -56,7 +56,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>profil_R.png</normaloff>profil_R.png</iconset>
+     <normaloff>assets/profil_R.png</normaloff>assets/profil_R.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -82,7 +82,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>send.svg</normaloff>send.svg</iconset>
+     <normaloff>assets/send.svg</normaloff>assets/send.svg</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -111,7 +111,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>predict.png</normaloff>predict.png</iconset>
+     <normaloff>assets/predict.png</normaloff>assets/predict.png</iconset>
    </property>
    <property name="iconSize">
     <size>

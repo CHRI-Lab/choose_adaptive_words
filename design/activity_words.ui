@@ -27,7 +27,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>gomme.png</normaloff>gomme.png</iconset>
+     <normaloff>assets/gomme.png</normaloff>assets/gomme.png</iconset>
    </property>
    <property name="iconSize">
     <size>

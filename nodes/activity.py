@@ -32,9 +32,9 @@ class Activity(QtWidgets.QDialog):
 	def __init__(self):
 		self.tactileSurface = None
 		self.childProfile = None
-		self.pathWriter = None
 		self.seqWord = 0
-		self.predictor = Predictor()
+		self.pathWriter = None
+		#self.predictor = Predictor()
 		self.lettersToWrite = []
 		self.iteration = 0
 		self.skills = {}
@@ -61,9 +61,8 @@ class Activity(QtWidgets.QDialog):
 
 		# add slots
 		self.buttonErase.clicked.connect(self.buttonEraseClicked)
-
-
 		self.tactileSurface.signalRobotFinishWriting.connect(self.callback_RobotFinishWriting)
+		#self.pathWriter = self.pathText.text
 
 
 	def initSkills(self):
